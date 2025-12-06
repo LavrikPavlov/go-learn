@@ -1,0 +1,116 @@
+package types
+
+import (
+	"bufio"
+	"fmt"
+	"os"
+	"reflect"
+	"strings"
+)
+
+/**
+Синтаксисы для присваивания
+
+@1 - var float = 1.8
+@2 - float := 1.8
+
+@3 - var userKG int -!!!- нужно задать тип -!!!- GO ругаеться
+	 userKG = 100
+
+@4 - var userHeight, userKg = 1.8, 100
+*/
+
+func TypesService() {
+	var reader = bufio.NewReader(os.Stdin)
+	fmt.Print("\nПоказать все типы? (yes/no) default no: ")
+	answer, _ := reader.ReadString('\n')
+	isShowTypes := strings.Contains(strings.ToLower(answer), "yes")
+
+	if isShowTypes {
+		myTypes := AllTypes{}
+		myTypes.getInfoTypes()
+	}
+}
+
+func (a AllTypes) getInfoTypes() {
+	fmt.Println("=== Все поля структуры AllTypes ===")
+
+	t := reflect.TypeOf(a)
+
+	for i := 0; i < t.NumField(); i++ {
+		field := t.Field(i)
+		fmt.Printf("Поле: %s\n", field.Name)
+		fmt.Printf("Тип: %v\n", field.Type)
+		fmt.Printf("Описание: %s\n", field.Tag.Get("описание"))
+		fmt.Println("---")
+	}
+}
+
+type AllTypes struct {
+	// Целые числа со знаком
+	Int8  int8  `описание:"8-битное целое со знаком (-128 до 127)"`
+	Int16 int16 `описание:"16-битное целое со знаком (-32768 до 32767)"`
+	Int32 int32 `описание:"32-битное целое со знаком"`
+	Int64 int64 `описание:"64-битное целое со знаком"`
+	Int   int   `описание:"Зависит от платформы (32 или 64 бита)"`
+
+	// Целые числа без знака
+	Uint8  uint8  `описание:"8-битное целое без знака (0 до 255)"`
+	Uint16 uint16 `описание:"16-битное целое без знака"`
+	Uint32 uint32 `описание:"32-битное целое без знака"`
+	Uint64 uint64 `описание:"64-битное целое без знака"`
+	Uint   uint   `описание:"Беззнаковое целое, зависит от платформы"`
+
+	// Числа с плавающей точкой
+	Float32 float32 `описание:"32-битное число с плавающей точкой"`
+	Float64 float64 `описание:"64-битное число с плавающей точкой"`
+
+	// Комплексные числа
+	Complex64  complex64  `описание:"64-битное комплексное число"`
+	Complex128 complex128 `описание:"128-битное комплексное число"`
+
+	// Строки и символы
+	String string `описание:"Строка символов UTF-8"`
+	Rune   rune   `описание:"Псевдоним int32, Unicode кодпоинт"`
+	Byte   byte   `описание:"Псевдоним uint8, ASCII символ"`
+
+	// Логический тип
+	Bool bool `описание:"Логическое значение (истина/ложь)"`
+
+	// Специальные типы
+	IntPtr    *int      `описание:"Указатель на целое число"`
+	StringPtr *string   `описание:"Указатель на строку"`
+	EmptyPtr  *struct{} `описание:"Указатель на пустую структуру"`
+
+	// Слайсы (срезы)
+	IntSlice    []int    `описание:"Динамический массив целых чисел"`
+	StringSlice []string `описание:"Динамический массив строк"`
+	ByteSlice   []byte   `описание:"Динамический массив байтов"`
+
+	// Карты (словари)
+	StringMap map[string]int `описание:"Карта: строка → целое число"`
+	IntMap    map[int]string `описание:"Карта: целое число → строка"`
+
+	// Каналы
+	IntChan     chan int       `описание:"Канал для передачи целых чисел"`
+	SendChan    chan<- string  `описание:"Канал только для отправки строк"`
+	ReceiveChan <-chan float64 `описание:"Канал только для получения чисел с плавающей точкой"`
+
+	// Функции
+	NoArgFunc func()             `описание:"Функция без аргументов"`
+	AddFunc   func(int, int) int `описание:"Функция с двумя целыми аргументами, возвращает целое"`
+	ErrorFunc func() error       `описание:"Функция, возвращающая ошибку"`
+
+	// Интерфейсы
+	EmptyInterface interface{} `описание:"Пустой интерфейс (может содержать любой тип)"`
+	ErrorInterface error       `описание:"Интерфейс ошибки"`
+
+	// Структуры
+	SimpleStruct struct {
+		X, Y int
+		Name string
+	} `описание:"Простая структура"`
+
+	// Специальные системные типы
+	Uintptr uintptr `описание:"Целое число для хранения указателей (unsafe)"`
+}
