@@ -2,6 +2,7 @@ package functions
 
 import (
 	"bufio"
+	"errors"
 	"fmt"
 	"io"
 	"log"
@@ -21,7 +22,7 @@ const (
 func GetNum(value string, typeValue TypeValue, reader *bufio.Reader) interface{} {
 	var writer io.Writer = os.Stdout
 	var logger = log.New(writer, "", log.LstdFlags)
-	var count int = 0
+	var count = 0
 	for {
 		fmt.Printf("\n%s: ", value)
 		inStr, _ := reader.ReadString('\n')
@@ -46,12 +47,30 @@ func GetNum(value string, typeValue TypeValue, reader *bufio.Reader) interface{}
 func getValue(typeValue TypeValue, input string) (interface{}, error) {
 	switch typeValue {
 	case FLOAT:
-		return strconv.ParseFloat(input, 64)
+		return parseFloat(input)
 	case INTEGER:
-		return strconv.Atoi(input)
+		return parseInt(input)
 	case STRING:
 		return input, nil
 	default:
 		return nil, fmt.Errorf("неизвестный тип: %s", typeValue)
 	}
+}
+
+func parseFloat(value string) (float64, error) {
+	if strings.ContainsAny(value, "-") {
+		return 0, getNegativeError()
+	}
+	return strconv.ParseFloat(value, 64)
+}
+
+func parseInt(value string) (int, error) {
+	if strings.ContainsAny(value, "-") {
+		return 0, getNegativeError()
+	}
+	return strconv.Atoi(value)
+}
+
+func getNegativeError() error {
+	return errors.New("cannot contain negative numbers")
 }

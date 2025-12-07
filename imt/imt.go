@@ -9,7 +9,7 @@ import (
 	"github.com/LavrikPavlov/go-learn/imt/functions"
 )
 
-func ImtService() {
+func ImtService() string {
 	var height float64
 	var weight int
 
@@ -18,16 +18,16 @@ func ImtService() {
 	weight = functions.GetNum("Вес", functions.INTEGER, reader).(int)
 	height = functions.GetNum("Рост в м.: ", functions.FLOAT, reader).(float64)
 
-	calcUser(height, weight)
+	return calcUser(height, weight)
 }
 
-func calcUser(userHeight float64, userWeight int) {
+func calcUser(userHeight float64, userWeight int) string {
 	var IMT = float64(userWeight) / math.Pow(userHeight, 2)
 	fmt.Println("IMT пользователя: ", IMT)
 	fmt.Printf("Результат %s", checkIMT(IMT))
 
-	var kg, count = userWeight, userHeight
-	fmt.Printf("\nВес: %d | Рост:%.1f м.\n", kg, count)
+	var kg, count, result = userWeight, userHeight, IMT
+	return fmt.Sprintf("\nВес: %d | Рост:%.2f м. | Процент: %.2f%% \n", kg, count, result)
 
 }
 
