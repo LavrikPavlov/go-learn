@@ -8,6 +8,8 @@ import (
 	"github.com/LavrikPavlov/go-learn/types"
 	"log"
 	"os"
+	"os/exec"
+	"runtime"
 	"strconv"
 	"strings"
 )
@@ -32,27 +34,32 @@ func main() {
 				types.TypesService()
 			case 3:
 				length_string.StringService()
+			case 4:
+				types.TestTypesService()
 			case 0:
 				exitApp()
+			default:
+				getInfoCommand()
 			}
 			if result != "" {
-				logger.Printf("Программа вернула: %s", result)
+				logger.Printf("\nПрограмма вернула: %s", result)
 			}
+			countError = 0
 		} else {
+			countError++
 			if countError == 3 {
 				exitApp()
+				break
 			}
-
-			if parseError == nil {
-				logger.Println(err)
-			}
-
-			if err == nil {
+			if parseError != nil {
 				logger.Println(parseError)
+				continue
 			}
-
-			getInfoCommand()
-			countError++
+			if err != nil {
+				logger.Println(err)
+				continue
+			}
+			clearTerminal()
 		}
 	}
 }
@@ -62,10 +69,24 @@ func getInfoCommand() {
 	Команда [1] - сервси для расчета IMT
 	Команда [2] - сервси для вывода инфы о всех переменных
 	Команда [3] - сервси для игры в длину строки
+	Команда [4] - сервис для теста типов
 	Команда [0] - выход
 	`)
 }
 
 func exitApp() {
 	os.Exit(0)
+}
+
+func clearTerminal() {
+	var cmd *exec.Cmd
+
+	if runtime.GOOS == "windows" {
+		cmd = exec.Command("cmd", "/c", "cls")
+	} else {
+		cmd = exec.Command("clear")
+	}
+
+	cmd.Stdout = os.Stdout
+	cmd.Run()
 }

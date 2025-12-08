@@ -1,11 +1,8 @@
 package types
 
 import (
-	"bufio"
 	"fmt"
-	"os"
 	"reflect"
-	"strings"
 )
 
 /**
@@ -19,32 +16,6 @@ import (
 
 @4 - var userHeight, userKg = 1.8, 100
 */
-
-func TypesService() {
-	var reader = bufio.NewReader(os.Stdin)
-	fmt.Print("\nПоказать все типы? (yes/no) default no: ")
-	answer, _ := reader.ReadString('\n')
-	isShowTypes := strings.Contains(strings.ToLower(answer), "yes")
-
-	if isShowTypes {
-		myTypes := AllTypes{}
-		myTypes.getInfoTypes()
-	}
-}
-
-func (a AllTypes) getInfoTypes() {
-	fmt.Println("=== Все поля структуры AllTypes ===")
-
-	t := reflect.TypeOf(a)
-
-	for i := 0; i < t.NumField(); i++ {
-		field := t.Field(i)
-		fmt.Printf("Поле: %s\n", field.Name)
-		fmt.Printf("Тип: %v\n", field.Type)
-		fmt.Printf("Описание: %s\n", field.Tag.Get("описание"))
-		fmt.Println("---")
-	}
-}
 
 type AllTypes struct {
 	// Целые числа со знаком
@@ -113,4 +84,28 @@ type AllTypes struct {
 
 	// Специальные системные типы
 	Uintptr uintptr `описание:"Целое число для хранения указателей (unsafe)"`
+}
+
+func showAvailableTypes() {
+	allTypes := AllTypes{}
+	t := reflect.TypeOf(allTypes)
+
+	fmt.Println("┌─────────────────┬────────────────────────────────────────────┐")
+	fmt.Println("│ Имя типа        │ Описание                                   │")
+	fmt.Println("├─────────────────┼────────────────────────────────────────────┤")
+
+	for i := 0; i < t.NumField(); i++ {
+		field := t.Field(i)
+		name := field.Name
+		desc := field.Tag.Get("описание")
+
+		// Обрезаем длинное описание
+		if len(desc) > 40 {
+			desc = desc[:37] + "..."
+		}
+
+		fmt.Printf("│ %-15s │ %-42s │\n", name, desc)
+	}
+
+	fmt.Println("└─────────────────┴────────────────────────────────────────────┘")
 }

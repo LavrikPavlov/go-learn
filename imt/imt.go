@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"math"
 	"os"
-
-	"github.com/LavrikPavlov/go-learn/imt/functions"
 )
 
 func ImtService() string {
@@ -15,8 +13,8 @@ func ImtService() string {
 
 	reader := bufio.NewReader(os.Stdin)
 	fmt.Println("Введите рост через точку в метрах и вес: ")
-	weight = functions.GetNum("Вес", functions.INTEGER, reader).(int)
-	height = functions.GetNum("Рост в м.: ", functions.FLOAT, reader).(float64)
+	weight = GetNum("Вес", INTEGER, reader).(int)
+	height = GetNum("Рост в м.: ", FLOAT, reader).(float64)
 
 	return calcUser(height, weight)
 }

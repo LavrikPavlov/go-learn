@@ -3,8 +3,9 @@ package length_string
 import "fmt"
 
 func StringService() {
-	var message string = ""
+	var message = ""
 	var maxLength = genNum(15)
+	fmt.Println("Максимальная длина сгенерирована")
 	fmt.Print("Введите слово и нажмите Enter: ")
 	_, _ = fmt.Scanln(&message)
 
